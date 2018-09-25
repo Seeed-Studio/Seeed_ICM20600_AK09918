@@ -25,16 +25,17 @@ void setup()
     Serial.begin(9600);
 
     err = ak09918.isDataReady();
-    // while (err != AK09918_ERR_OK) 
-    // {
-    //     Serial.println("Waiting Sensor");
-    //     delay(100);
-    //     err = ak09918.isDataReady();
-    // }
+    while (err != AK09918_ERR_OK) 
+    {
+        Serial.println("Waiting Sensor");
+        delay(100);
+        err = ak09918.isDataReady();
+    }
 
-    // Serial.println("Start figure-8 calibration after 2 seconds.");
-    // delay(2000);
-    // calibrate(10000, &offset_x, &offset_y, &offset_z);
+    Serial.println("Start figure-8 calibration after 2 seconds.");
+    delay(2000);
+    calibrate(10000, &offset_x, &offset_y, &offset_z);
+    Serial.println("");
 }
 
 void loop()
@@ -51,6 +52,14 @@ void loop()
     Serial.print(",  ");
     Serial.print(acc_z);
     Serial.println(" mg");
+
+    Serial.print("G:  ");
+    Serial.print(icm20600.getGyroscopeX());
+    Serial.print(",  ");
+    Serial.print(icm20600.getGyroscopeY());
+    Serial.print(",  ");
+    Serial.print(icm20600.getGyroscopeZ());
+    Serial.println(" dps");
 
     ak09918.getData(&x, &y, &z);
     x = x - offset_x;
@@ -81,6 +90,7 @@ void loop()
 
     Serial.print("Heading: ");
     Serial.println(heading);
+    Serial.println("--------------------------------");
   
     delay(500);
     

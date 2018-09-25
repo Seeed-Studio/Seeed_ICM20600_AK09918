@@ -204,14 +204,20 @@ public:
     void initialize();
     void reset();
 
+    // Set power mode, the default mode is ICM_6AXIS_LOW_POWER(set in initialize() function)
     void setPowerMode(icm20600_power_type_t mode);
+    // Divides the internal sample rate to generate the sample rate that controls
+    // sensor data output rate. Only works at mode: ICM_GYRO_LOW_POWER / ICM_ACC_LOW_POWER / ICM_ACC_LOW_NOISE
+    // SAMPLE_RATE = 1KHz / (1 + div)
     void setSampleRateDivier(uint8_t div);
 
     void setAccScaleRange(acc_scale_type_t range);
+    // Averaging filter settings for Low Power Accelerometer mode
     void setAccAverageSample(acc_averaging_sample_type_t sample);
     void setAccOutputDataRate(acc_lownoise_odr_type_t odr);
     
     void setGyroScaleRange(gyro_scale_type_t range);
+    // Averaging filter configuration for low-power gyroscope mode
     void setGyroAverageSample(gyro_averaging_sample_type_t sample);
     void setGyroOutputDataRate(gyro_lownoise_odr_type_t odr);
 
@@ -231,6 +237,8 @@ public:
     int16_t getRawGyroscopeY(void);
     int16_t getRawGyroscopeZ(void);
 
+    // Yes there is a digital-output temperature sensor in ICM20600,
+    // return a integer centigrade degree
     int16_t getTemperature(void);
 
 private:

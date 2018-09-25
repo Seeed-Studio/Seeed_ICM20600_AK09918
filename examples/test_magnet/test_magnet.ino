@@ -35,12 +35,15 @@ void loop()
         err = ak09918.getData(&x, &y, &z);
         if (err == AK09918_ERR_OK)
         {
-            Serial.print("X:");
+            Serial.print("X: ");
             Serial.print(x);
-            Serial.print("\tY:");
+            Serial.print("uT");
+            Serial.print("\tY: ");
             Serial.print(y);
-            Serial.print("\tZ:");
-            Serial.println(z);
+            Serial.print("uT");
+            Serial.print("\tZ: ");
+            Serial.print(z);
+            Serial.println("uT");
         }
         else
         {

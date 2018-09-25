@@ -25,16 +25,16 @@ void setup()
     Serial.begin(9600);
 
     err = ak09918.isDataReady();
-    while (err != AK09918_ERR_OK) 
-    {
-        Serial.println("Waiting Sensor");
-        delay(100);
-        err = ak09918.isDataReady();
-    }
+    // while (err != AK09918_ERR_OK) 
+    // {
+    //     Serial.println("Waiting Sensor");
+    //     delay(100);
+    //     err = ak09918.isDataReady();
+    // }
 
-    Serial.println("Start figure-8 calibration after 2 seconds.");
-    delay(2000);
-    calibrate(10000, &offset_x, &offset_y, &offset_z);
+    // Serial.println("Start figure-8 calibration after 2 seconds.");
+    // delay(2000);
+    // calibrate(10000, &offset_x, &offset_y, &offset_z);
 }
 
 void loop()
@@ -43,54 +43,46 @@ void loop()
     acc_x = icm20600.getAccelerationX();
     acc_y = icm20600.getAccelerationY();
     acc_z = icm20600.getAccelerationZ();
-    // roll/pitch in radian
-    roll = atan2((float)acc_y, (float)acc_z);
-    pitch = atan2(-(float)acc_x, sqrt((float)acc_y*acc_y+(float)acc_z*acc_z));
-    Serial.print("roll: ");
-    Serial.print(roll*57.3);
-    Serial.print("\tpitch: ");
-    Serial.print(pitch*57.3);
+
+    Serial.print("A:  ");
+    Serial.print(acc_x);
+    Serial.print(",  ");
+    Serial.print(acc_y);
+    Serial.print(",  ");
+    Serial.print(acc_z);
+    Serial.println(" mg");
 
     ak09918.getData(&x, &y, &z);
     x = x - offset_x;
     y = y - offset_y;
     z = z - offset_z;
 
+    Serial.print("M:  ");
+    Serial.print(x);
+    Serial.print(",  ");
+    Serial.print(y);
+    Serial.print(",  ");
+    Serial.print(z);
+    Serial.println(" uT");
+
+    // roll/pitch in radian
+    roll = atan2((float)acc_y, (float)acc_z);
+    pitch = atan2(-(float)acc_x, sqrt((float)acc_y*acc_y+(float)acc_z*acc_z));
+    Serial.print("Roll: ");
+    Serial.println(roll*57.3);
+    Serial.print("Pitch: ");
+    Serial.println(pitch*57.3);
+
     double Xheading = x * cos(pitch) + y * sin(roll) * sin(pitch) + z * cos(roll) * sin(pitch);
     double Yheading = y * cos(roll) - z * sin(pitch);
     
 
     double heading = 180 + 57.3*atan2(Yheading, Xheading) + declination_shenzhen;
-    // if (Xheading < 0 && Yheading < 0)
-    // {
-    //     heading = 180.0 - 57.3*atan2(Yheading, Xheading);
-    // }
-    // else if (Xheading > 0 && Yheading < 0)
-    // {
-    //     heading = 57.3*atan2(Yheading, Xheading);
-    // }
-    // else if (Xheading > 0 && Yheading > 0)
-    // {
-    //     heading = 360.0 - 57.3*atan2(Yheading, Xheading);
-    // }
-    // else if (Xheading < 0 && Yheading > 0)
-    // {
-    //     heading = 180.0 + 57.3*atan2(Yheading, Xheading); 
-    // }
-    // else if (Xheading == 0 && Yheading < 0)
-    // {
-    //     heading = 90.0;
-    // }
-    // else if (Xheading == 0 && Yheading > 0)
-    // {
-    //     heading = 270.0;
-    // }
 
-
-    Serial.print("\tHeading: ");
+    Serial.print("Heading: ");
     Serial.println(heading);
   
-    delay(200);
+    delay(500);
     
 }
 

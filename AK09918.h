@@ -86,14 +86,14 @@ enum AK09918_mode_type_t
 
 enum AK09918_err_type_t
 {
-    AK09918_ERR_OK = 0,
-    AK09918_ERR_DOR = 1,
-    AK09918_ERR_NOT_RDY = 2,
-    AK09918_ERR_TIMEOUT = 3,
-    AK09918_ERR_SELFTEST_FAILED = 4,
-    AK09918_ERR_OVERFLOW = 5,
-    AK09918_ERR_WRITE_FAILED = 6,
-    AK09918_ERR_READ_FAILED = 7,
+    AK09918_ERR_OK = 0,                 // ok
+    AK09918_ERR_DOR = 1,                // data skipped 
+    AK09918_ERR_NOT_RDY = 2,            // not ready
+    AK09918_ERR_TIMEOUT = 3,            // read/write timeout
+    AK09918_ERR_SELFTEST_FAILED = 4,    // self test failed
+    AK09918_ERR_OVERFLOW = 5,           // sensor overflow, means |x|+|y|+|z| >= 4912uT
+    AK09918_ERR_WRITE_FAILED = 6,       // fail to write
+    AK09918_ERR_READ_FAILED = 7,        // fail to read
 
 };
 
@@ -104,17 +104,27 @@ public:
 
     // default to AK09918_CONTINUOUS_10HZ mode
     AK09918_err_type_t initialize(AK09918_mode_type_t mode = AK09918_NORMAL);
+    // At AK09918_CONTINUOUS_** mode, check if data is ready to read
     AK09918_err_type_t isDataReady();
+    // At AK09918_CONTINUOUS_** mode, check if data is skipped
     AK09918_err_type_t isDataSkip();
+    // Get magnet data in uT
     AK09918_err_type_t getData(int32_t *axis_x, int32_t *axis_y, int32_t *axis_z);
+    // Get raw I2C magnet data
     AK09918_err_type_t getRawData(int32_t *axis_x, int32_t *axis_y, int32_t *axis_z);
 
-    AK09918_mode_type_t getMode();
-    AK09918_err_type_t switchMode(AK09918_mode_type_t mode);
-    AK09918_err_type_t selfTest();
-    AK09918_err_type_t reset();
-    String strError(AK09918_err_type_t err);
 
+    // Return the working mode of AK09918
+    AK09918_mode_type_t getMode();
+    // Switch the working mode of AK09918
+    AK09918_err_type_t switchMode(AK09918_mode_type_t mode);
+    // Start a self-test, if pass, return AK09918_ERR_OK
+    AK09918_err_type_t selfTest();
+    // Reset AK09918
+    AK09918_err_type_t reset();
+    // Get details of AK09918_err_type_t 
+    String strError(AK09918_err_type_t err);
+    // Get device ID
     uint16_t getDeviceID();
     
 

@@ -50,7 +50,6 @@ AK09918_err_type_t AK09918::initialize(AK09918_mode_type_t mode)
         return AK09918::switchMode(_mode);
 }
 
-// TO TEST
 AK09918_err_type_t AK09918::isDataReady()
 {
     if (!I2Cdev::readByte(_addr, AK09918_ST1, _buffer))
@@ -64,7 +63,6 @@ AK09918_err_type_t AK09918::isDataReady()
     }
 }
 
-// TO TEST
 AK09918_err_type_t AK09918::isDataSkip()
 {
     if (!I2Cdev::readByte(_addr, AK09918_ST1, _buffer))
@@ -78,8 +76,6 @@ AK09918_err_type_t AK09918::isDataSkip()
     }
 }
 
-
-// TO TEST
 AK09918_err_type_t AK09918::getData(int32_t *axis_x, int32_t *axis_y, int32_t *axis_z)
 {
     AK09918_err_type_t err = AK09918::getRawData(axis_x, axis_y, axis_z);
@@ -90,7 +86,6 @@ AK09918_err_type_t AK09918::getData(int32_t *axis_x, int32_t *axis_y, int32_t *a
     return err;
 }
 
-// TO TEST
 AK09918_err_type_t AK09918::getRawData(int32_t *axis_x, int32_t *axis_y, int32_t *axis_z)
 {
     if (_mode == AK09918_NORMAL)
@@ -127,7 +122,6 @@ AK09918_mode_type_t AK09918::getMode()
     return _mode;
 }
 
-
 AK09918_err_type_t AK09918::switchMode(AK09918_mode_type_t mode)
 {
     if (mode == AK09918_SELF_TEST) 
@@ -138,8 +132,6 @@ AK09918_err_type_t AK09918::switchMode(AK09918_mode_type_t mode)
     return AK09918_ERR_OK;
 }
 
-
-// TO Test
 // 1.Set Power-down mode. (MODE[4:0] bits = “00000”)
 // 2.Set Self-test mode. (MODE[4:0] bits = “10000”)
 // 3.Check Data Ready or not by polling DRDY bit of ST1 register.
@@ -200,7 +192,6 @@ AK09918_err_type_t AK09918::selfTest()
     }
 }
 
-// TO Test
 AK09918_err_type_t AK09918::reset()
 {
     if (!I2Cdev::writeByte(_addr, AK09918_CNTL3, AK09918_SRST_BIT))
@@ -210,7 +201,6 @@ AK09918_err_type_t AK09918::reset()
     return AK09918_ERR_OK;
 }
 
-// TO test
 String AK09918::strError(AK09918_err_type_t err)
 {
     String result;

@@ -3,8 +3,7 @@
 
 ICM20600 icm20600(true);
 
-void setup()
-{
+void setup() {
     // join I2C bus (I2Cdev library doesn't do this automatically)
     Wire.begin();
 
@@ -13,8 +12,7 @@ void setup()
     // icm20600.reset();
 }
 
-void loop()
-{
+void loop() {
     // Serial.print("DeviceID: ");
     // Serial.println(icm20600.getDeviceID(), HEX);
 

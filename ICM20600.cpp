@@ -1,22 +1,22 @@
 #include "ICM20600.h"
 
-ICM20600::ICM20600(bool AD0)
-{
-    if (AD0) _addr = ICM20600_I2C_ADDR2;
-    else _addr = ICM20600_I2C_ADDR1;
+ICM20600::ICM20600(bool AD0) {
+    if (AD0) {
+        _addr = ICM20600_I2C_ADDR2;
+    } else {
+        _addr = ICM20600_I2C_ADDR1;
+    }
 }
 
 
-uint8_t ICM20600::getDeviceID()
-{
+uint8_t ICM20600::getDeviceID() {
     I2Cdev::readByte(_addr, ICM20600_WHO_AM_I, _buffer);
     return _buffer[0];
 }
 
-void ICM20600::initialize()
-{
+void ICM20600::initialize() {
     // configuration
-    I2Cdev::writeByte(_addr,ICM20600_CONFIG, 0x00);
+    I2Cdev::writeByte(_addr, ICM20600_CONFIG, 0x00);
     // disable fifo
     I2Cdev::writeByte(_addr, ICM20600_FIFO_EN, 0x00);
 
@@ -35,8 +35,7 @@ void ICM20600::initialize()
 }
 
 
-void ICM20600::setPowerMode(icm20600_power_type_t mode)
-{
+void ICM20600::setPowerMode(icm20600_power_type_t mode) {
     uint8_t data_pwr1;
     uint8_t data_pwr2 = 0x00;
     uint8_t data_gyro_lp;
@@ -47,49 +46,48 @@ void ICM20600::setPowerMode(icm20600_power_type_t mode)
     data_gyro_lp = _buffer[0];
     // When set to ‘1’ low-power gyroscope mode is enabled. Default setting is 0
     data_gyro_lp &= 0x7f;               // 0b01111111
-    switch(mode)
-    {
+    switch (mode) {
         case ICM_SLEEP_MODE:
             data_pwr1 |= 0x40;          // set 0b01000000
-        break;
+            break;
 
         case ICM_STANDYBY_MODE:
             data_pwr1 |= 0x10;          // set 0b00010000
             data_pwr2 = 0x38;           // 0x00111000 disable acc
-        break;
+            break;
 
         case ICM_ACC_LOW_POWER:
             data_pwr1 |= 0x20;          // set bit5 0b00100000
             data_pwr2 = 0x07;           //0x00000111 disable gyro
-        break;
+            break;
 
         case ICM_ACC_LOW_NOISE:
-            data_pwr1 |= 0x00;     
+            data_pwr1 |= 0x00;
             data_pwr2 = 0x07;           //0x00000111 disable gyro
-        break;
+            break;
 
         case ICM_GYRO_LOW_POWER:
             data_pwr1 |= 0x00;          // dont set bit5 0b00000000
             data_pwr2 = 0x38;           // 0x00111000 disable acc
             data_gyro_lp |= 0x80;
-        break;
+            break;
 
         case ICM_GYRO_LOW_NOISE:
-            data_pwr1 |= 0x00;  
+            data_pwr1 |= 0x00;
             data_pwr2 = 0x38;           // 0x00111000 disable acc
-        break;
+            break;
 
         case ICM_6AXIS_LOW_POWER:
             data_pwr1 |= 0x00;          // dont set bit5 0b00100000
             data_gyro_lp |= 0x80;
-        break;
+            break;
 
         case ICM_6AXIS_LOW_NOISE:
-            data_pwr1 |= 0x00;  
-        break;
+            data_pwr1 |= 0x00;
+            break;
 
         default:
-        break;
+            break;
     }
     I2Cdev::writeByte(_addr, ICM20600_PWR_MGMT_1, data_pwr1);
     I2Cdev::writeByte(_addr, ICM20600_PWR_MGMT_2, data_pwr2);
@@ -98,43 +96,40 @@ void ICM20600::setPowerMode(icm20600_power_type_t mode)
 
 // SAMPLE_RATE = 1KHz / (1 + div)
 // work for low-power gyroscope and low-power accelerometer and low-noise accelerometer
-void ICM20600::setSampleRateDivier(uint8_t div)
-{
+void ICM20600::setSampleRateDivier(uint8_t div) {
     I2Cdev::writeByte(_addr, ICM20600_SMPLRT_DIV, div);
 }
 
 
-void ICM20600::setAccScaleRange(acc_scale_type_t range)
-{
+void ICM20600::setAccScaleRange(acc_scale_type_t range) {
     uint8_t data;
     I2Cdev::readByte(_addr, ICM20600_ACCEL_CONFIG, _buffer);
     data = _buffer[0];
     data &= 0xe7; // 0b 1110 0111
 
-    switch(range)
-    {
+    switch (range) {
         case RANGE_2G:
             data |= 0x00;   // 0bxxx00xxx
             _acc_scale = 4000;
-        break;
-        
+            break;
+
         case RANGE_4G:
             data |= 0x08;   // 0bxxx01xxx
             _acc_scale = 8000;
-        break;
+            break;
 
         case RANGE_8G:
             data |= 0x10;   // 0bxxx10xxx
             _acc_scale = 16000;
-        break;
+            break;
 
         case RANGE_16G:
             data |= 0x18;   // 0bxxx11xxx
             _acc_scale = 32000;
-        break;
+            break;
 
         default:
-        break;
+            break;
     }
 
     I2Cdev::writeByte(_addr, ICM20600_ACCEL_CONFIG, data);
@@ -142,119 +137,113 @@ void ICM20600::setAccScaleRange(acc_scale_type_t range)
 
 
 // for low power mode only
-void ICM20600::setAccAverageSample(acc_averaging_sample_type_t sample)
-{
+void ICM20600::setAccAverageSample(acc_averaging_sample_type_t sample) {
     uint8_t data = 0;
     I2Cdev::readByte(_addr, ICM20600_ACCEL_CONFIG2, _buffer);
     data = _buffer[0];
 
-    data &= 0xcf; // & 0b11001111 
-    switch(sample)
-    {
+    data &= 0xcf; // & 0b11001111
+    switch (sample) {
         case ACC_AVERAGE_4:
             data |= 0x00; // 0bxx00xxxx
-        break;
+            break;
 
         case ACC_AVERAGE_8:
             data |= 0x10; // 0bxx01xxxx
-        break;
+            break;
 
         case ACC_AVERAGE_16:
             data |= 0x20; // 0bxx10xxxx
-        break;
+            break;
 
         case ACC_AVERAGE_32:
             data |= 0x30; // 0bxx11xxxx
-        break;
+            break;
 
         default:
-        break;
+            break;
     }
 
     I2Cdev::writeByte(_addr, ICM20600_ACCEL_CONFIG2, data);
 }
 
 
-void ICM20600::setAccOutputDataRate(acc_lownoise_odr_type_t odr)
-{
+void ICM20600::setAccOutputDataRate(acc_lownoise_odr_type_t odr) {
     uint8_t data;
     I2Cdev::readByte(_addr, ICM20600_ACCEL_CONFIG2, _buffer);
     data = _buffer[0];
     data &= 0xf0;  // 0b11110000
 
-    switch(odr)
-    {
+    switch (odr) {
         case ACC_RATE_4K_BW_1046:
             data |= 0x08;
-        break;
+            break;
 
         case ACC_RATE_1K_BW_420:
             data |= 0x07;
-        break;
+            break;
 
         case ACC_RATE_1K_BW_218:
             data |= 0x01;
-        break;
+            break;
 
         case ACC_RATE_1K_BW_99:
             data |= 0x02;
-        break;
+            break;
 
         case ACC_RATE_1K_BW_44:
             data |= 0x03;
-        break;
+            break;
 
         case ACC_RATE_1K_BW_21:
             data |= 0x04;
-        break;
+            break;
 
         case ACC_RATE_1K_BW_10:
             data |= 0x05;
-        break;
+            break;
 
         case ACC_RATE_1K_BW_5:
             data |= 0x06;
-        break;
+            break;
 
         default:
-        break;
+            break;
     }
 
     I2Cdev::writeByte(_addr, ICM20600_ACCEL_CONFIG2, data);
 }
 
 
-void ICM20600::setGyroScaleRange(gyro_scale_type_t range)
-{
+void ICM20600::setGyroScaleRange(gyro_scale_type_t range) {
     uint8_t data = 0;
     I2Cdev::readByte(_addr, ICM20600_GYRO_CONFIG, _buffer);
     data = _buffer[0];
     data &= 0xe7; // 0b11100111
 
-    switch(range)
-    {
+    switch (range) {
         case RANGE_250_DPS:
             data |= 0x00;   // 0bxxx00xxx
             _gyro_scale = 500;
-        break;
-        
+            break;
+
         case RANGE_500_DPS:
             data |= 0x08;   // 0bxxx00xxx
             _gyro_scale = 1000;
-        break;
+            break;
 
         case RANGE_1K_DPS:
             data |= 0x10;   // 0bxxx10xxx
             _gyro_scale = 2000;
-        break;
+            break;
 
         case RANGE_2K_DPS:
             data |= 0x18;   // 0bxxx11xxx
             _gyro_scale = 4000;
-        break;
+            break;
 
         default:
-        break;
+            break;
     }
 
     I2Cdev::writeByte(_addr, ICM20600_GYRO_CONFIG, data);
@@ -262,50 +251,48 @@ void ICM20600::setGyroScaleRange(gyro_scale_type_t range)
 
 
 // for low power mode only
-void ICM20600::setGyroAverageSample(gyro_averaging_sample_type_t sample)
-{
+void ICM20600::setGyroAverageSample(gyro_averaging_sample_type_t sample) {
     uint8_t data = 0;
     I2Cdev::readByte(_addr, ICM20600_GYRO_LP_MODE_CFG, _buffer);
     data = _buffer[0];
 
-    data &= 0x8f;           // 0b10001111 
-    switch(sample)
-    {
+    data &= 0x8f;           // 0b10001111
+    switch (sample) {
         case GYRO_AVERAGE_1:
             data |= 0x00; // 0bx000xxxx
-        break;
+            break;
 
         case GYRO_AVERAGE_2:
             data |= 0x10; // 0bx001xxxx
-        break;
+            break;
 
         case GYRO_AVERAGE_4:
             data |= 0x20; // 0bx010xxxx
-        break;
+            break;
 
         case GYRO_AVERAGE_8:
             data |= 0x30; // 0bx011xxxx
-        break;
+            break;
 
         case GYRO_AVERAGE_16:
             data |= 0x40; // 0bx100xxxx
-        break;
+            break;
 
         case GYRO_AVERAGE_32:
             data |= 0x50; // 0bx101xxxx
-        break;
+            break;
 
         case GYRO_AVERAGE_64:
             data |= 0x60;
-        break;
+            break;
 
         case GYRO_AVERAGE_128:
             data |= 0x70;
-        break;
+            break;
 
 
         default:
-        break;
+            break;
     }
 
     I2Cdev::writeByte(_addr, ICM20600_GYRO_LP_MODE_CFG, data);
@@ -313,144 +300,126 @@ void ICM20600::setGyroAverageSample(gyro_averaging_sample_type_t sample)
 
 
 
-void ICM20600::setGyroOutputDataRate(gyro_lownoise_odr_type_t odr)
-{
+void ICM20600::setGyroOutputDataRate(gyro_lownoise_odr_type_t odr) {
     uint8_t data;
     I2Cdev::readByte(_addr, ICM20600_CONFIG, _buffer);
     data = _buffer[0];
     data &= 0xf8;  // DLPF_CFG[2:0] 0b11111000
 
-    switch(odr)
-    {
+    switch (odr) {
         case GYRO_RATE_8K_BW_3281:
             data |= 0x07;
-        break;
+            break;
         case GYRO_RATE_8K_BW_250:
             data |= 0x00;
-        break;
+            break;
         case GYRO_RATE_1K_BW_176:
             data |= 0x01;
-        break;
+            break;
         case GYRO_RATE_1K_BW_92:
             data |= 0x02;
-        break;
+            break;
         case GYRO_RATE_1K_BW_41:
             data |= 0x03;
-        break;
+            break;
         case GYRO_RATE_1K_BW_20:
             data |= 0x04;
-        break;
+            break;
         case GYRO_RATE_1K_BW_10:
             data |= 0x05;
-        break;
+            break;
         case GYRO_RATE_1K_BW_5:
             data |= 0x06;
-        break;
+            break;
     }
 
     I2Cdev::writeByte(_addr, ICM20600_CONFIG, data);
 }
 
-void ICM20600::getAcceleration(int16_t* x, int16_t* y, int16_t* z)
-{
+void ICM20600::getAcceleration(int16_t* x, int16_t* y, int16_t* z) {
     *x = ICM20600::getAccelerationX();
     *y = ICM20600::getAccelerationY();
     *z = ICM20600::getAccelerationZ();
 }
 
-int16_t ICM20600::getAccelerationX(void)
-{
+int16_t ICM20600::getAccelerationX(void) {
     int32_t raw_data = ICM20600::getRawAccelerationX();
     raw_data = (raw_data * _acc_scale) >> 16;
     return (int16_t)raw_data;
 }
-int16_t ICM20600::getAccelerationY(void)
-{
+int16_t ICM20600::getAccelerationY(void) {
     int32_t raw_data = ICM20600::getRawAccelerationY();
     raw_data = (raw_data * _acc_scale) >> 16;
     return (int16_t)raw_data;
 }
-int16_t ICM20600::getAccelerationZ(void)
-{
+int16_t ICM20600::getAccelerationZ(void) {
     int32_t raw_data = ICM20600::getRawAccelerationZ();
     raw_data = (raw_data * _acc_scale) >> 16;
     return (int16_t)raw_data;
 }
 
-int16_t ICM20600::getRawAccelerationX(void)
-{
+int16_t ICM20600::getRawAccelerationX(void) {
     I2Cdev::readBytes(_addr, ICM20600_ACCEL_XOUT_H, 2, _buffer);
     return ((int16_t)_buffer[0] << 8) + _buffer[1];
 }
 
-int16_t ICM20600::getRawAccelerationY(void)
-{
+int16_t ICM20600::getRawAccelerationY(void) {
     I2Cdev::readBytes(_addr, ICM20600_ACCEL_YOUT_H, 2, _buffer);
     return ((int16_t)_buffer[0] << 8) + _buffer[1];
 }
 
-int16_t ICM20600::getRawAccelerationZ(void)
-{
+int16_t ICM20600::getRawAccelerationZ(void) {
     I2Cdev::readBytes(_addr, ICM20600_ACCEL_ZOUT_H, 2, _buffer);
     return ((int16_t)_buffer[0] << 8) + _buffer[1];
 }
 
-void ICM20600::getGyroscope(int16_t* x, int16_t* y, int16_t* z)
-{
+void ICM20600::getGyroscope(int16_t* x, int16_t* y, int16_t* z) {
     *x = ICM20600::getGyroscopeX();
     *y = ICM20600::getGyroscopeY();
     *z = ICM20600::getGyroscopeZ();
 }
 
-int16_t ICM20600::getGyroscopeX(void)
-{
+int16_t ICM20600::getGyroscopeX(void) {
     int32_t raw_data = ICM20600::getRawGyroscopeX();
     raw_data = (raw_data * _gyro_scale) >> 16;
     return (int16_t)raw_data;
 }
 
-int16_t ICM20600::getGyroscopeY(void)
-{
+int16_t ICM20600::getGyroscopeY(void) {
     int32_t raw_data = ICM20600::getRawGyroscopeY();
     raw_data = (raw_data * _gyro_scale) >> 16;
     return (int16_t)raw_data;
 }
 
-int16_t ICM20600::getGyroscopeZ(void)
-{
+int16_t ICM20600::getGyroscopeZ(void) {
     int32_t raw_data = ICM20600::getRawGyroscopeZ();
     raw_data = (raw_data * _gyro_scale) >> 16;
     return (int16_t)raw_data;
 }
 
-int16_t ICM20600::getRawGyroscopeX(void)
-{
+int16_t ICM20600::getRawGyroscopeX(void) {
     I2Cdev::readBytes(_addr, ICM20600_GYRO_XOUT_H, 2, _buffer);
     return ((int16_t)_buffer[0] << 8) + _buffer[1];
 }
 
-int16_t ICM20600::getRawGyroscopeY(void)
-{
+int16_t ICM20600::getRawGyroscopeY(void) {
     I2Cdev::readBytes(_addr, ICM20600_GYRO_YOUT_H, 2, _buffer);
     return ((int16_t)_buffer[0] << 8) + _buffer[1];
 }
 
-int16_t ICM20600::getRawGyroscopeZ(void)
-{
+int16_t ICM20600::getRawGyroscopeZ(void) {
     I2Cdev::readBytes(_addr, ICM20600_GYRO_ZOUT_H, 2, _buffer);
     return ((int16_t)_buffer[0] << 8) + _buffer[1];
 }
 
-int16_t ICM20600::getTemperature(void)
-{
+int16_t ICM20600::getTemperature(void) {
     uint16_t rawdata;
     I2Cdev::readBytes(_addr, ICM20600_TEMP_OUT_H, 2, _buffer);
     rawdata = (((uint16_t)_buffer[0]) << 8) + _buffer[1];
-    return (int16_t)(rawdata/327 + 25);
+    return (int16_t)(rawdata / 327 + 25);
 }
 
-void ICM20600::reset()
-{
+void ICM20600::reset() {
     uint8_t data;
     I2Cdev::readByte(_addr, ICM20600_USER_CTRL, _buffer);
     data = _buffer[0];

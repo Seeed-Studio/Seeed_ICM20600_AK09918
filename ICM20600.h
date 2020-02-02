@@ -1,34 +1,34 @@
-/* 
- * ICM20600.h
- * A library for Grove - IMU 9DOF(ICM20600 + AK09918)
- *
- * Copyright (c) 2018 seeed technology inc.
- * Website    : www.seeed.cc
- * Author     : Jerry Yip
- * Create Time: 2018-06
- * Version    : 0.1
- * Change Log :
- *
- * The MIT License (MIT)
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
+/*
+    ICM20600.h
+    A library for Grove - IMU 9DOF(ICM20600 + AK09918)
+
+    Copyright (c) 2018 seeed technology inc.
+    Website    : www.seeed.cc
+    Author     : Jerry Yip
+    Create Time: 2018-06
+    Version    : 0.1
+    Change Log :
+
+    The MIT License (MIT)
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in
+    all copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+    THE SOFTWARE.
+*/
 
 
 
@@ -39,9 +39,9 @@
 #include "I2Cdev.h"
 
 /***************************************************************
- ICM20600 I2C Register
+    ICM20600 I2C Register
  ***************************************************************/
-#define ICM20600_XG_OFFS_TC_H           0x04     
+#define ICM20600_XG_OFFS_TC_H           0x04
 #define ICM20600_XG_OFFS_TC_L           0x05
 #define ICM20600_YG_OFFS_TC_H           0x07
 #define ICM20600_YG_OFFS_TC_L           0x08
@@ -116,8 +116,7 @@
 #define ICM20600_DEVICE_RESET_BIT       (1 << 7)
 
 // Gyroscope scale range
-enum gyro_scale_type_t
-{
+enum gyro_scale_type_t {
     RANGE_250_DPS = 0,
     RANGE_500_DPS,
     RANGE_1K_DPS,
@@ -125,8 +124,7 @@ enum gyro_scale_type_t
 };
 
 // Accelerometer scale range
-enum acc_scale_type_t
-{
+enum acc_scale_type_t {
     RANGE_2G = 0,
     RANGE_4G,
     RANGE_8G,
@@ -134,8 +132,7 @@ enum acc_scale_type_t
 };
 
 // Gyroscope output data rate
-enum gyro_lownoise_odr_type_t 
-{
+enum gyro_lownoise_odr_type_t {
     GYRO_RATE_8K_BW_3281 = 0,
     GYRO_RATE_8K_BW_250,
     GYRO_RATE_1K_BW_176,
@@ -147,8 +144,7 @@ enum gyro_lownoise_odr_type_t
 };
 
 // Accelerometer output data rate
-enum acc_lownoise_odr_type_t 
-{
+enum acc_lownoise_odr_type_t {
     ACC_RATE_4K_BW_1046 = 0,
     ACC_RATE_1K_BW_420,
     ACC_RATE_1K_BW_218,
@@ -160,8 +156,7 @@ enum acc_lownoise_odr_type_t
 };
 
 // Averaging filter settings for Low Power Accelerometer mode
-enum acc_averaging_sample_type_t  
-{
+enum acc_averaging_sample_type_t {
     ACC_AVERAGE_4 = 0,
     ACC_AVERAGE_8,
     ACC_AVERAGE_16,
@@ -169,8 +164,7 @@ enum acc_averaging_sample_type_t
 };
 
 // Averaging filter configuration for low-power gyroscope mode
-enum gyro_averaging_sample_type_t
-{
+enum gyro_averaging_sample_type_t {
     GYRO_AVERAGE_1 = 0,
     GYRO_AVERAGE_2,
     GYRO_AVERAGE_4,
@@ -182,8 +176,7 @@ enum gyro_averaging_sample_type_t
 };
 
 // ICM20600 power mode
-enum icm20600_power_type_t
-{
+enum icm20600_power_type_t {
     ICM_SLEEP_MODE = 0,
     ICM_STANDYBY_MODE,
     ICM_ACC_LOW_POWER,
@@ -195,9 +188,8 @@ enum icm20600_power_type_t
 };
 
 
-class ICM20600
-{
-public:
+class ICM20600 {
+  public:
     ICM20600(bool AD0 = true);
 
     uint8_t getDeviceID();
@@ -215,7 +207,7 @@ public:
     // Averaging filter settings for Low Power Accelerometer mode
     void setAccAverageSample(acc_averaging_sample_type_t sample);
     void setAccOutputDataRate(acc_lownoise_odr_type_t odr);
-    
+
     void setGyroScaleRange(gyro_scale_type_t range);
     // Averaging filter configuration for low-power gyroscope mode
     void setGyroAverageSample(gyro_averaging_sample_type_t sample);
@@ -228,7 +220,7 @@ public:
     int16_t getRawAccelerationX(void);
     int16_t getRawAccelerationY(void);
     int16_t getRawAccelerationZ(void);
-    
+
     void getGyroscope(int16_t* x, int16_t* y, int16_t* z);
     int16_t getGyroscopeX(void);
     int16_t getGyroscopeY(void);
@@ -241,10 +233,10 @@ public:
     // return a integer centigrade degree
     int16_t getTemperature(void);
 
-private:
+  private:
     uint8_t _addr;
     uint8_t _buffer[16];
-    uint16_t _acc_scale, _gyro_scale; 
+    uint16_t _acc_scale, _gyro_scale;
 
 };
 

@@ -1,4 +1,4 @@
-# Seeed ICM20600 + AK09918 Library
+# Seeed ICM20600 + AK09918 Library  [![Build Status](https://travis-ci.com/Seeed-Studio/Seeed_ICM20600_AK09918.svg?branch=master)](https://travis-ci.com/Seeed-Studio/Seeed_ICM20600_AK09918)
 
 This is the Arduino Library for Seeed's ICM20600 + AK09918 based products. For now, it's Grove - IMU 9DOF(ICM20600+AK09918).
 

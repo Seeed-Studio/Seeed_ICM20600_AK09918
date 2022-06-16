@@ -105,9 +105,9 @@ AK09918_err_type_t AK09918::getRawData(int32_t* axis_x, int32_t* axis_y, int32_t
     if (!I2Cdev::readBytes(_addr, AK09918_HXL, 8, _buffer)) {
         return AK09918_ERR_READ_FAILED;
     } else {
-        *axis_x = (int32_t)((((int16_t)_buffer[1]) << 8) | _buffer[0]);
-        *axis_y = (int32_t)((((int16_t)_buffer[3]) << 8) | _buffer[2]);
-        *axis_z = (int32_t)((((int16_t)_buffer[5]) << 8) | _buffer[4]);
+        *axis_x = (int16_t)(_buffer[1] << 8 | _buffer[0]);
+        *axis_y = (int16_t)(_buffer[3] << 8 | _buffer[2]);
+        *axis_z = (int16_t)(_buffer[5] << 8 | _buffer[4]);
         if (_buffer[7] & AK09918_HOFL_BIT) {
             return AK09918_ERR_OVERFLOW;
         }
